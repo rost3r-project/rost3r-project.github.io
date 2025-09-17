@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>RoST3R: Robot-Aware Dynamic 3D Reconstruction for Robotic Manipulation</title>
+  <link href="./files/style.css" rel="stylesheet">
+  <link rel="icon" href="icons/rost3r_icon.png" type="image/png">
+  <!-- Begin new styles from demos page -->
+  <style>
+    body {
+      padding: 2em;
+      font-family: sans-serif;
+    }
+
+    iframe {
+      border-radius: 0.5em;
+      width: 27.5em;
+      height: 27.5em;
+      border: none;
+      box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 768px) {
+      iframe {
+        width: 100%;
+        height: 30em;
+      }
+    }
+
+    a,
+    a:link {
+      color: #777;
+    }
+
+    /* Styles for the instruction icons and text */
+    .instructions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.2em;
+      text-align: center;
+      padding: 0.6em;
+    }
+
+    .instruction-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      font-size: 0.8em;
+    }
+
+    .instruction-item img {
+      width: 24px;
+      height: 24px;
+    }
+    .instruction-item_small {
+      display: flex;
+      align-items: center;
+      gap: 0.3em;
+      font-size: 0.8em;
+    }
+
+    .instruction-item_small img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .controls-wrapper {
+  display: flex;
+  justify-content: center; /* centers horizontally */
+  gap: 50px;               /* spacing between columns */
+  margin-top: 20px;
+}
+
+.controls-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* keeps items aligned left inside column */
+}
+
+.instruction-item,
+.instruction-item_small {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.instruction-item img,
+.instruction-item_small img {
+  margin-right: 8px;
+}
+
+.controls-column h4 {
+  margin-bottom: 4px; /* smaller gap between title and first item */
+}
+
+
+    /* —— Carousel layout —— */
+    .iframe-carousel {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 1rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .iframe-viewport {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2em;
+    }
+
+    /* Reuse your existing iframe look */
+    .iframe-viewport iframe {
+      width: 100%;
+      aspect-ratio: 12 / 9;
+      height: auto;
+      object-fit: cover;
+      display: block;
+      border: 2px solid white;
+      background: white;
+      border-radius: 0.5em;
+      box-shadow: 0 0 1em 0 rgba(0,0,0,0.15);
+    }
+
+    /* Arrow buttons */
+    .iframe-nav {
+      cursor: pointer;
+      border: none;
+      background: #f3f3f3;
+      padding: 0.6rem 0.8rem;
+      border-radius: 999px;
+      font-size: 1.25rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      transition: transform 0.06s ease, background 0.2s ease;
+    }
+    .iframe-nav:hover { background: #e9e9e9; }
+    .iframe-nav:active { transform: scale(0.96); }
+
+    /* (Optional) stack to one on very small screens */
+    @media (max-width: 768px) {
+      .iframe-viewport { grid-template-columns: 1fr; }
+    }
+
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+          background-color: white;
+    }
+
+
+
+    .video-grid iframe,
+    .video-grid video {
+      width: 100%;
+      aspect-ratio: 12 / 9; /* Enable this to maintain correct aspect ratio */
+      height: auto;         /* Ensures the height scales properly */
+      object-fit: cover;    /* Ensures the video fills the area (no black borders) */
+      display: block;       /* Prevents inline whitespace */
+      border: 2px solid white;   /* white border if any exists */
+      background-color: white;   /* fills behind transparent/letterboxed video */
+    }
+
+    .row {
+      display: flex;
+      width: 100%;
+      height: 60px; /* adjust height as needed */
+    }
+
+    .column {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px; /* increase this number as needed */
+      font-weight: bold; /* optional: makes text bolder */
+      border-right: 1px solid #eee;
+    }
+
+    .column:last-child {
+      border-right: none; /* remove right border from last column */
+    }
+
+    @media (max-width: 768px) {
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+<style>
+.custom-link {
+  color: black !important;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+.custom-link:hover {
+  border-bottom: 2px solid black;
+}
+a.custom-link[href] {
+  color: black !important;
+  text-decoration: none;
+  border-bottom: 2px solid black;  /* underline replacement */
+  padding-bottom: 2px;
+  transition: border-color 0.3s ease;
+}
+a.custom-link[href]:hover {
+  border-bottom-color: #555;       /* darker on hover */
+}
+a.custom-link:not([href]) {
+  color: black !important;
+  opacity: 0.6;                    /* faded non-clickable */
+}
+</style>
+  <!-- End new styles -->
+</head>
+
+<body>
+  <div class="content">
+<h1 style="line-height: 0.75;">
+<!--   <img src="./icons/rost3r_icon.png" alt="RoST3R Icon"
+       style="width: 40px; height: auto; vertical-align: middle; margin-right: 8px;"> -->
+  <strong style="line-height: 1.0;">
+  RoST3R: <br>
+  Robot-Aware Dynamic 3D Reconstruction for Robotic Manipulation
+</strong>
+</h1>
+<!--    <p id="authors">-->
+<!--      <span>-->
+<!--        <a href="https://github.com/Yanbing-Han">Yanbing Han<sup>1*</sup></a>-->
+<!--      </span>-->
+<!--      <span>-->
+<!--        <a href="https://geng-haoran.github.io/">Haoran Geng<sup>2*</sup></a>-->
+<!--      </span>-->
+<!--      <span>-->
+<!--        <a href="https://junyi42.github.io/">Junyi Zhang<sup>2+</sup></a>-->
+<!--      </span>-->
+<!--      <span>-->
+<!--        <a href="https://scholar.google.com/citations?user=u9Z__t0AAAAJ">Ziyu Chen<sup>1</sup></a>-->
+<!--      </span>-->
+<!--      <span>-->
+<!--        <a href="https://charlietcheng.github.io/">Charlie Cheng<sup>2</sup></a>-->
+<!--      </span>-->
+<!--      <br>-->
+<!--      <span>-->
+<!--        <a href="https://github.com/Peihao2021">Peihao Li<sup>2</sup></a>-->
+<!--      </span>-->
+<!--      <span>-->
+<!--        <a href="https://people.eecs.berkeley.edu/~pabbeel/">Pieter Abbeel<sup>2</sup></a>-->
+<!--      </span>-->
+<!--      <span>-->
+<!--        <a href="https://people.eecs.berkeley.edu/~trevor/">Trevor Darrell<sup>2</sup></a>-->
+<!--      </span>-->
+<!--      <span>-->
+<!--        <a href="https://people.eecs.berkeley.edu/~malik/">Jitendra Malik<sup>2</sup></a>-->
+<!--      </span>-->
+<!--      <span>-->
+<!--        <a href="https://yuewang.xyz/">Yue Wang<sup>1</sup></a>-->
+<!--      </span>-->
+<!--      <br>-->
+<!--      <span class="institution">-->
+<!--        <sup>1</sup> University of Southern California-->
+<!--        <sup>2</sup> University of California, Berkeley-->
+<!--      </span>-->
+<!--      <br>-->
+<!--      <span class="note">(*: equal contribution, +: project lead)</span>-->
+<!--      <br>-->
+<!--    </p>-->
+
+    <p id="authors">
+      <span>
+        <a>Author Names Omitted for Anonymous Review.</a>
+      </span>
+    </p>
+
+    <!-- <br>
+        <img src="./files/teaser_monst3r.png" class="teaser-gif" style="width:100%;"><br> -->
+
+    <!-- add video files/teaser_vid_v2_lowres.mp4 -->
+    <video width="100%" controls>
+      <source src="./files/overview/overview-noborder.mp4" type="video/mp4">
+    </video>
+    <br>
+    <br>
+
+    <a style="text-align:center">
+      <strong>RoST3R</strong> reconstructs robot-aware, scale-aligned 3D scene representations directly from RGB images to boost policy learning. It achieves stronger <strong>generalization</strong> compared to policies trained on 2D images.
+    </a>
+<p style="text-align: center; font-size: 1.5rem;">
+  <a href="files\RoST3R.pdf" class="custom-link">[Paper]</a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a class="custom-link">[Arxiv]</a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#interactive-4d-visualization" class="custom-link">[Interactive Results 🔥]</a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a class="custom-link">[Code]</a>
+</p>
+
+
+  </div>
+
+
+  <div class="content">
+    <h2 id="interactive-4d-visualization">Interactive 4D Visualization</h2>
+  <!-- Begin new content: Demos -->
+
+    <!-- ===== IFRAME CAROUSEL (two at a time) ===== -->
+    <div class="iframe-carousel" id="iframeCarousel">
+      <button class="iframe-nav prev" aria-label="Previous">&#10094;</button>
+
+      <div class="iframe-viewport">
+        <div class="iframe-slot" id="slotA"></div>
+        <div class="iframe-slot" id="slotB"></div>
+      </div>
+
+      <button class="iframe-nav next" aria-label="Next">&#10095;</button>
+    </div>
+    <!-- =========================================== -->
+<div class="controls-wrapper">
+  <!-- Mouse Controls -->
+  <div class="controls-column">
+    <h4>Mouse Controls</h4>
+    <div class="instruction-item">
+      <img src="icons/left-click.png" alt="Left Click">
+      <span>Drag with <em>left</em> click to <strong>rotate</strong> view</span>
+    </div>
+    <div class="instruction-item">
+      <img src="icons/right-click.png" alt="Right Click">
+      <span>Drag with <em>right</em> click to <strong>move</strong> view</span>
+    </div>
+    <div class="instruction-item">
+      <img src="icons/scroll-wheel.png" alt="Scroll Wheel">
+      <span>Scroll to <strong>zoom</strong> in/out</span>
+    </div>
+  </div>
+
+  <!-- Keyboard Controls -->
+  <div class="controls-column">
+    <h4>Keyboard Controls</h4>
+    <div class="instruction-item">
+      <img src="icons/letter-w.png" alt="W">
+      <img src="icons/letter-s.png" alt="S">
+      <span>forward and backward</span>
+    </div>
+    <div class="instruction-item">
+      <img src="icons/letter-a.png" alt="A">
+      <img src="icons/letter-d.png" alt="D">
+      <span>left and right</span>
+    </div>
+    <div class="instruction-item">
+      <img src="icons/letter-q.png" alt="Q">
+      <img src="icons/letter-e.png" alt="E">
+      <span>upward and downward</span>
+    </div>
+  </div>
+</div>
+
+  <p style="text-align: center; font-size: 1em; padding: 0; color: #555;">
+
+  </p>
+
+  <!-- Downsampling note -->
+<!--  <p style="text-align: center; font-size: 1em; padding: 0; color: #555;">-->
+<!--    (Results are downsampled <strong>4 times</strong> for efficient online rendering)-->
+<!--  </p>-->
+
+  <!-- Wrapper for iframes -->
+<!--  <div id="wrapper" style="-->
+<!--        display: flex;-->
+<!--        flex-wrap: wrap;-->
+<!--        justify-content: center;-->
+<!--        align-items: center;-->
+<!--        gap: 2em;-->
+<!--      ">-->
+<!--    &lt;!&ndash; Insert two iframes &ndash;&gt;-->
+<!--    <iframe-->
+<!--      src="https://rost3r-project.github.io/build/?playbackPath=https://rost3r-project.github.io/recordings/recording_demo_0025.viser&initDistanceScale=1&initHeightOffset=0.0"></iframe>-->
+
+<!--    <iframe-->
+<!--      src="https://rost3r-project.github.io/build/?playbackPath=https://rost3r-project.github.io/recordings/recording_bear.viser&initDistanceScale=0.2&initHeightOffset=0.175"></iframe>-->
+<!--  </div>-->
+
+  </div>
+
+  <!-- End new content -->
+
+  <div class="content">
+    <h2 style="text-align:center;">Abstract</h2>
+    <p> 3D scene representations offer stronger general-
+ization for policy learning compared to 2D representations, yet
+collecting such 3D data has required special sensors. Previous
+methods for 3D reconstruction from video exist, but have
+been unsuitable for robotic learning due to error and lack of
+metric calibration. In this work, we demonstrate that 3D scene
+representations can be reliably reconstructed from standard
+2D RGB images, making it both accessible and practical for
+      robot learning. We propose a novel framework, RoST3R (<u>Ro</u>bot
+Mon<u>ST3R</u>), that incrementally reconstructs dynamic 3D scenes
+at metric scale from RGB images, enabling 3D-aware policy
+learning in complex environments from only 2D inputs. At its
+core, our approach estimates the robot’s pose during scene
+reconstruction, registers its kinematic structure within the
+environment, and builds a unified 3D scene representation.
+This unified 3D representation offers two key benefits: it
+enables policy learning at metric scale in a consistent world
+frame—decoupling object and camera dynamics—and provides
+a coherent model of the robot and environment to support fine-
+grained spatial reasoning. Notably, while the input remains
+2D, our approach generates a 3D-aware representation that
+significantly improves generalization. Experiments show that
+policies trained with this 3D representation outperform those
+trained on 2D inputs, particularly in tasks involving environ-
+mental variations, novel viewpoints and camera motion. In
+simulation, our method outperforms 2D counterparts by 24.5%
+under environmental variations and dynamic camera motion.
+In real-world scenarios, it achieves a 29.5% performance
+improvement.
+    </p>
+  </div>
+  
+  <div class="content">
+    <h2>Robot-Aware Scale-Aligned Dynamic 3D Reconstruction</h2>
+    <img class="summary-img" src="./files/overview/CoRL-overview11.png" alt="" style="width:100%;">
+    <a>
+      RoST3R extends MonST3R for incremental dynamic 3D reconstruction in the world coordinate,
+by adjusting the pair-sampling strategy for a global streaming pointmap optimization (Section III-A). Then, by aligning
+the robot 3D model with 2D observations in each frame (Section III-B), RoST3R can reliably register the robot into the
+environment in a unified 3D space, as well as calibrate the environment reconstruction to be metric-scale (Section III-C).
+    </a>
+
+    <!-- <p> The global optimization is based on the following three loss terms: </p>
+    <ul>
+      <li> <strong>Alignment loss</strong>: align the global point cloud of each frame with every pairwise pointmap. </li>
+      <li> <strong>Flow loss</strong>: encourage the projected flow from global pointmaps and camera poses to be consitent with the estimated flow. </li>
+      <li> <strong>Smoothness loss</strong>: enforce the temporal smoothness of camera trajectory. </li>
+    </ul> -->
+  </div>
+
+  <div class="content">
+    <h2>Results - Robot Pose Estimation</h2>
+    <p> <strong>Quantitatively</strong> our framework accurately estimates robot pose in real-world scenarios (Panda 3CAM) and under partial occlusion conditions (RoboVerse).
+    In each image, the robot mesh is projected onto the image using the pose estimated by our method.</p>
+    <img class="summary-img" src="./files/pose_estimation_results/figure_grid_with_pretty_labels.png" alt="" style="width:80%;">
+    <div class="column">Visualization of pose estimation</div>
+    <!-- todo, video depth example from davis -->
+  </div>
+
+  <div class="content">
+    <h2>Simulation Results - RoboVerse</h2>
+    <p> <strong>Quantitatively</strong>, Our RoST3R 3D representation demonstrates superior generalization ability compared to its 2D-based counterparts. </p>
+    <img class="summary-img" src="./files/simulation_results/robovese.jpg" alt="" style="width:80%;">
+    <div class="column">Generalization levels of evaluation on RoboVerse benchmark</div>
+  </div>
+
+  <div class="content">
+    <h2>Real World Results</h2>
+    <p> Qualitative comparison of real-world task executions using <strong>Diffusion Policy (Left)</strong> and <strong>RoST3R-DP3 (Right)</strong>, shown at 3× speed.  </p>
+    <div class="video-grid">
+    <iframe src="./files/real_world_results/plant_dp.mp4" allowfullscreen></iframe>
+    <iframe src="./files/real_world_results/plant_rost3r.mp4" allowfullscreen></iframe>
+    <iframe src="./files/real_world_results/rose_dp.mp4" allowfullscreen></iframe>
+    <iframe src="./files/real_world_results/rose_plant.mp4" allowfullscreen></iframe>
+    <iframe src="./files/real_world_results/water_dp.mp4" allowfullscreen></iframe>
+    <iframe src="./files/real_world_results/water_rost3r.mp4" allowfullscreen></iframe>
+    </div>
+    <div class="row">
+      <div class="column">DP</div>
+      <div class="column">RoST3R-DP3</div>
+    </div>
+    <p> <strong>Quantitatively</strong>, Our method outperforms 2D-based Diffusion Policy by <strong><u>29.5%</u></strong>, highlighting the importance of 3D reasoning capabilities. </p>
+    <img class="summary-img" src="./files/real_world_results/real_world_result.jpg" alt="" style="width:60%;">
+  </div>
+
+<!--  </div>-->
+<!--  <div class="content">-->
+<!--    <h2>BibTex</h2>-->
+<!--    <font size="-0.">-->
+<!--    <code> @article{yanbing2025rost3r,<br>-->
+<!--    &nbsp;&nbsp;title={RoST3R: Robot-Aware Dynamic 3D Reconstruction for Robotic Manipulation},<br>-->
+<!--    &nbsp;&nbsp;author={Han, Yanbing and Geng, Haoran and Zhang, Junyi and Chen, Ziyu and Cheng, Charlie and Li, Peihao and Abbeel, Pieter and Darell, Trevor and Wang, Yue},<br>-->
+<!--    &nbsp;&nbsp;journal={arXiv preprint arxiv:???},<br>-->
+<!--    &nbsp;&nbsp;year={2024}<br>-->
+<!--    } </code>-->
+<!--  </font>-->
+<!--  </div>-->
+  
+<!--  <div class="content" id="acknowledgements">-->
+<!--    <p><strong>Acknowledgements</strong>:-->
+<!--      We borrow this template from <a href="https://monst3r-project.github.io/">MonST3R</a>, which is originally from <a href="https://dreambooth.github.io/">DreamBooth</a>.-->
+<!--      The interactive 4D visualization is powered by <a href="https://github.com/nerfstudio-project/viser">Viser</a>.-->
+<!--      We sincerely thank <a href="https://scholar.google.com/citations?hl=en&user=Ecy6lXwAAAAJ">Brent Yi</a> for his support in setting up the online visualization.-->
+<!--    </p>-->
+<!--  </div>-->
+</body>
+
+</html>
+
+
+<script>
+  // Add all your iframe URLs here; two will show at a time.
+  const sources = [
+          "https://rost3r-project.github.io/build/?playbackPath=https://rost3r-project.github.io/recordings/recording_demo_0025.viser&initDistanceScale=1&initHeightOffset=0.0",
+          "https://rost3r-project.github.io/build/?playbackPath=https://rost3r-project.github.io/recordings/recording_cube.viser&initDistanceScale=1&initHeightOffset=0.0",
+          "https://rost3r-project.github.io/build/?playbackPath=https://rost3r-project.github.io/recordings/recording_basket.viser&initDistanceScale=1&initHeightOffset=0.0",
+          "https://rost3r-project.github.io/build/?playbackPath=https://rost3r-project.github.io/recordings/recording_closebox1.viser&initDistanceScale=1&initHeightOffset=0.0",
+  ];
+
+  // Show two at a time; move in steps of 2. (Change STEP to 1 if you want overlapping slides.)
+  const STEP = 2;
+
+  let start = 0;
+  const slotA = document.getElementById("slotA");
+  const slotB = document.getElementById("slotB");
+  const prevBtn = document.querySelector("#iframeCarousel .prev");
+  const nextBtn = document.querySelector("#iframeCarousel .next");
+
+  function createIframe(src) {
+    const f = document.createElement("iframe");
+    f.src = src;
+    f.loading = "lazy";
+    f.allowFullscreen = true;
+    f.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
+    return f;
+  }
+
+  function render() {
+    // Clear slots
+    slotA.innerHTML = "";
+    slotB.innerHTML = "";
+
+    if (sources.length === 0) return;
+    const idxA = start % sources.length;
+    const idxB = (start + 1) % sources.length;
+
+    slotA.appendChild(createIframe(sources[idxA]));
+
+    // If only one source, duplicate the first so layout stays intact.
+    slotB.appendChild(createIframe(sources.length > 1 ? sources[idxB] : sources[idxA]));
+  }
+
+  function next() {
+    start = (start + STEP) % sources.length;
+    render();
+  }
+
+  function prev() {
+    // handle negative wrap
+    start = (start - STEP) % sources.length;
+    if (start < 0) start += Math.ceil(Math.abs(start) / sources.length) * sources.length;
+    render();
+  }
+
+  prevBtn.addEventListener("click", prev);
+  nextBtn.addEventListener("click", next);
+
+  // Keyboard arrows
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") next();
+    if (e.key === "ArrowLeft") prev();
+  });
+
+  // Basic swipe support (mobile)
+  let touchStartX = null;
+  document.querySelector(".iframe-viewport").addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+  }, {passive: true});
+  document.querySelector(".iframe-viewport").addEventListener("touchend", (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
+  }, {passive: true});
+
+  render();
+</script>
+
